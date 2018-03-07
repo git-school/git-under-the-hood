@@ -1,0 +1,87 @@
+LOOKING at .git FOLDER
+mkdir testing1 && cd testing1
+git init
+(Split vertically -- tree .git)
+************ watch -n 1 'tree .git/objects'
+echo "Hello world" > hello.txt
+git add hello.txt
+cat .git/objects/80/2992c4220de19a90767f3000a79a31b98d0df7
+*********** alias deflate="perl -MCompress::Zlib -e 'undef $/; print uncompress(<>)'" 
+deflate .git/objects/80/2992c4220de19a90767f3000a79a31b98d0df7
+printf "blob 12\000Hello world\n" | shasum
+
+(SLIDES)
+
+COMMITS -> TREES -> BLOBS
+git ls-files -s
+git commit -m "First commit"
+(tree .git)
+git cat-file -t ef866f30a61b24b38a650c22223bf4a62fb9a6fb
+git cat-file -t a50b30eb6b223aef893c367a0b93e9a5b21f155f
+git cat-file -p ef866f30a61b24b38a650c22223bf4a62fb9a6fb
+git cat-file -p a50b30eb6b223aef893c367a0b93e9a5b21f155f
+
+(SLIDES)
+
+CHANGING AN EXISTING COMMITTED FILE'S CONTENT
+echo "Hello Git" > hello.txt
+git add hello.txt
+git commit -m "Change text"
+git cat-file -p 552af3101d23cd029114ae07708f0b3228b4ea5f
+git cat-file -p 2f092e9cadfc1eb4a6d2febfddb941f4c1fe6fd6
+git cat-file -p 9f4d96d5b00d98959ea9960f069585ce42b1349a
+git log -p
+
+COMMITTING A SECOND FILE
+echo "More text" > second.txt
+git add second.txt
+git commit -m "Add second.txt"
+*tree we just created* — git cat-file -p head^{tree}
+*tree in the prior commit* — git cat-file -p head^^{tree}
+
+COMMITTING A SUBFOLDER WITH A FILE OF THE SAME CONTENT
+mkdir subfolder
+echo "Hello Git" > subfolder/subfile.txt
+git add subfolder
+git commit -m "Add subfolder"
+git cat-file -p head^{tree}
+git cat-file -p head^^{tree}
+git cat-file -p 58f663278d381fb6be12b6e110b7580fbde8ab9d
+
+(Slides)
+
+REFS, BRANCHES, HEAD, and TAGS
+BRANCHES
+************ watch -n 1 'tree .git -I "hooks|objects"'
+cat .git/refs/heads/master
+glol
+git rev-parse master~1
+git rev-parse master~1 > .git/refs/heads/newbranch
+git branch
+git checkout newbranch
+git checkout master
+echo “Even more text" > third.txt
+git add third.txt
+git commit -m "Add third.txt"
+glol
+
+HEAD
+cat .git/HEAD
+git checkout head~1 (detached head state)
+cat .git/HEAD
+git checkout newbranch
+cat .git/HEAD
+echo 'ref: refs/heads/master' > .git/HEAD
+echo "Keep adding text" > fourth.txt
+git add fourth.txt
+git commit -m "Add fourth.txt"
+cat .git/HEAD
+
+TAGS
+git tag mytag
+cat .git/refs/tags/mytag
+git cat-file -t 6502f980a3ce9c749e4df0a837ca5f62f4fb65bd
+git tag -a v1.0.0-alpha
+cat .git/refs/tags/v1.0.0-alpha
+git cat-file -t 5bec469f65868e8a0728d1a5ccf103f2a1253fb3
+git cat-file -p 5bec469f65868e8a0728d1a5ccf103f2a1253fb3
